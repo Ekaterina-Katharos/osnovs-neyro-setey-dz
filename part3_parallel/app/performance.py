@@ -6,6 +6,7 @@ from pathlib import Path
 from PIL import Image
 from augment import apply_augmentation
 
+
 def sequential_process(file_paths):
     """Последовательная обработка (для сравнения)."""
     start_time = time.time()
@@ -21,13 +22,14 @@ def sequential_process(file_paths):
     elapsed = time.time() - start_time
     return elapsed, len(result)
 
+
 def save_report(seq_time, par_time, count):
     """Сохраняет отчет в JSON."""
     report = {
         "files_processed": count,
         "sequential_time_sec": round(seq_time, 4),
         "parallel_time_sec": round(par_time, 4),
-        "speedup": round(seq_time / par_time, 2) if par_time > 0 else 0
+        "speedup": round(seq_time / par_time, 2) if par_time > 0 else 0,
     }
     os.makedirs("../data/output", exist_ok=True)
     with open("../data/output/performance_report.json", "w", encoding="utf-8") as f:
