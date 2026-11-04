@@ -2,7 +2,6 @@ import time
 import json
 import os
 import numpy as np
-from pathlib import Path
 from PIL import Image
 from augment import apply_augmentation
 
@@ -34,5 +33,5 @@ def save_report(seq_time, par_time, count):
     os.makedirs("../data/output", exist_ok=True)
     with open("../data/output/performance_report.json", "w", encoding="utf-8") as f:
         json.dump(report, f, indent=4, ensure_ascii=False)
-    print(f"Отчет сохранен в performance_report.json")
+    print("Отчет сохранен в performance_report.json")
     print(json.dumps(report, indent=4, ensure_ascii=False))

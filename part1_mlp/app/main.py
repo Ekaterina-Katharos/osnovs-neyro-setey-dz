@@ -1,4 +1,3 @@
-import os
 from models import NeuralNetwork
 from manager import DatasetManager
 from exceptions import NeuralNetError
@@ -12,69 +11,77 @@ dataset = DatasetManager()
 def main_menu():
     global network
     while True:
-        print("\n--- РњР•РќР® РќР•Р™Р РћРЎР•РўР ---")
-        print(
-            "1. РЎРѕР·РґР°С‚СЊ СЃРµС‚СЊ\n2. Р—Р°РіСЂСѓР·РёС‚СЊ РґР°РЅРЅС‹Рµ\n3. РћР±СѓС‡РёС‚СЊ\n4. РџСЂРµРґСЃРєР°Р·Р°С‚СЊ\n5. Р’РµСЃР° (СЃРѕС…СЂ/Р·Р°РіСЂ)\n6. Р“СЂР°С„РёРє\n7. Р’С‹С…РѕРґ"
-        )
-        choice = input("Р’С‹Р±РѕСЂ (1-7): ").strip()
+        print("\n--- МЕНЮ НЕЙРОСЕТИ ---")
+        print("1. Создать сеть")
+        print("2. Загрузить данные")
+        print("3. Обучить")
+        print("4. Предсказать")
+        print("5. Веса (сохр/загр)")
+        print("6. График")
+        print("7. Выход")
+
+        choice = input("Выбор (1-7): ").strip()
 
         try:
-            if choice == "1":
-                layers = [
-                    int(x)
-                    for x in input("РЎР»РѕРё (С‡РµСЂРµР· Р·Р°РїСЏС‚СѓСЋ, РЅР°РїСЂ. 2,4,1): ").split(",")
-                ]
-                act = input("РђРєС‚РёРІР°С†РёСЏ (sigmoid/relu): ").strip().lower()
-                network = NeuralNetwork(layers, activation=act)
-                print("РЎРµС‚СЊ СЃРѕР·РґР°РЅР°!")
-            elif choice == "2":
-                path = input("РџСѓС‚СЊ Рє CSV: ").strip()
+            if choice == '1':
+                msg = "Слои (через запятую, напр. 2,4,1): "
+                layers = [int(x) for x in input(msg).split(',')]
+                act = input("Активация (sigmoid/relu): ").strip()
+                network = NeuralNetwork(layers, activation=act.lower())
+                print("Сеть создана!")
+            elif choice == '2':
+                path = input("Путь к CSV: ").strip()
                 dataset.prepare_data(path)
-            elif choice == "3":
+            elif choice == '3':
                 if not network or dataset.X_train is None:
-                    print("РЎРЅР°С‡Р°Р»Р° СЃРѕР·РґР°Р№С‚Рµ СЃРµС‚СЊ Рё Р·Р°РіСЂСѓР·РёС‚Рµ РґР°РЅРЅС‹Рµ!")
+                    print("Нет данных для обучения!")
                     continue
-                lr = float(input("РЎРєРѕСЂРѕСЃС‚СЊ РѕР±СѓС‡РµРЅРёСЏ: "))
-                epochs = int(input("Р­РїРѕС…Рё: "))
-                batch = int(input("Р Р°Р·РјРµСЂ Р±Р°С‚С‡Р°: "))
-                print("РћР±СѓС‡РµРЅРёРµ...")
-                network.train(dataset.X_train, dataset.y_train, epochs, lr, batch)
-                print("РћР±СѓС‡РµРЅРёРµ Р·Р°РІРµСЂС€РµРЅРѕ!")
-            elif choice == "4":
+                lr = float(input("Скорость обучения: "))
+                epochs = int(input("Эпохи: "))
+                batch = int(input("Размер батча: "))
+                print("Обучение...")
+                network.train(
+                    dataset.X_train,
+                    dataset.y_train,
+                    epochs,
+                    lr,
+                    batch
+                )
+                print("Обучение завершено!")
+            elif choice == '4':
                 if not network or not network.is_trained:
-                    print("РЎРµС‚СЊ РЅРµ РѕР±СѓС‡РµРЅР°!")
+                    print("Сеть не обучена!")
                     continue
-                vals = [
-                    float(x) for x in input("Р’РІРµРґРёС‚Рµ РїСЂРёР·РЅР°РєРё С‡РµСЂРµР· РїСЂРѕР±РµР»: ").split()
-                ]
+                vals = [float(x) for x in input("Признаки: ").split()]
                 scaled_vals = dataset.scaler.transform(np.array([vals]))
-                print(f"РџСЂРµРґСЃРєР°Р·Р°РЅРёРµ: {network.predict(scaled_vals)[0][0]}")
-            elif choice == "5":
+                res = network.predict(scaled_vals)[0][0]
+                print(f"Предсказание: {res}")
+            elif choice == '5':
                 if not network:
-                    print("РќРµС‚ СЃРµС‚Рё.")
+                    print("Нет сети.")
                     continue
-                sub = input("1.РЎРѕС…СЂР°РЅРёС‚СЊ 2.Р—Р°РіСЂСѓР·РёС‚СЊ: ")
-                path = input("РРјСЏ С„Р°Р№Р»Р° (РЅР°РїСЂ. weights.npz): ")
-                if sub == "1":
+                sub = input("1.Сохранить 2.Загрузить: ")
+                path = input("Имя файла (напр. weights.npz): ")
+                if sub == '1':
                     network.save_weights(path)
-                    print("РЎРѕС…СЂР°РЅРµРЅРѕ!")
-                elif sub == "2":
+                    print("Сохранено!")
+                elif sub == '2':
                     network.load_weights(path)
-                    print("Р—Р°РіСЂСѓР¶РµРЅРѕ!")
-            elif choice == "6":
+                    print("Загружено!")
+            elif choice == '6':
                 if not network or not network.loss_history:
-                    print("РќРµС‚ РґР°РЅРЅС‹С….")
+                    print("Нет данных.")
                     continue
                 plt.plot(network.loss_history)
                 plt.show()
-            elif choice == "7":
+            elif choice == '7':
                 break
         except ValueError:
-            print("РћС€РёР±РєР° РІРІРѕРґР° С‡РёСЃР»Р°!")
+            print("Ошибка ввода числа!")
         except NeuralNetError as e:
-            print(f"РћС€РёР±РєР° СЃРµС‚Рё: {e}")
+            print(f"Ошибка сети: {e}")
         except Exception as e:
-            print(f"РћС€РёР±РєР°: {e}")
+            print(f"Ошибка: {e}")
 
 
 if __name__ == "__main__":

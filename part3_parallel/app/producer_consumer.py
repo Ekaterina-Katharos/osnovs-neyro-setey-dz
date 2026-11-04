@@ -2,7 +2,6 @@ import threading
 import queue
 import multiprocessing
 import logging
-import time
 import numpy as np
 from pathlib import Path
 from PIL import Image

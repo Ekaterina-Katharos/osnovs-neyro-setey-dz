@@ -87,8 +87,8 @@ class NeuralNetwork:
 
             for i in range(0, n_samples, batch_size):
                 X_batch, y_batch = (
-                    X_shuffled[i : i + batch_size],
-                    y_shuffled[i : i + batch_size],
+                    X_shuffled[i:i + batch_size],
+                    y_shuffled[i:i + batch_size],
                 )
                 output = self.forward(X_batch)
                 self.backward(X_batch, y_batch, learning_rate)

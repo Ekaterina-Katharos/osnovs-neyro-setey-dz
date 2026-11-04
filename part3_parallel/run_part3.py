@@ -1,5 +1,4 @@
 import sys
-import os
 import time
 import logging
 import multiprocessing
@@ -9,24 +8,21 @@ CURRENT_DIR = Path(__file__).resolve().parent
 APP_DIR = CURRENT_DIR / "app"
 sys.path.append(str(APP_DIR))
 
-from producer_consumer import run_parallel
-from performance import sequential_process, save_report
-from logging_config import setup_logging
+from producer_consumer import run_parallel  # noqa: E402
+from performance import sequential_process, save_report  # noqa: E402
+from logging_config import setup_logging  # noqa: E402
 
 
 def main():
     """Main function to run parallel data processing."""
     setup_logging()
-    
     input_dir = "data/input"
     ext = ['.jpg', '.png', '.jpeg']
-    
     path_obj = Path(input_dir)
     file_paths = [
-        f for f in path_obj.rglob('*') 
+        f for f in path_obj.rglob('*')
         if f.is_file() and f.suffix.lower() in ext
     ]
-    
     if not file_paths:
         logging.error("Files not found! Check data/input folder.")
         return
